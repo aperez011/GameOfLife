@@ -29,6 +29,7 @@ Task.Run(() =>
 {
     //Starting unfinish game
     dbGolContext ctx = new();
+    GOLInternalServices service = new GOLInternalServices(ctx);
 
     //Get unfinish game
     var games = ctx.FindBy<GameOfLifeHeader>(c => c.Status == GOLStatus.Running.ToString());
@@ -39,7 +40,6 @@ Task.Run(() =>
         {
             var lastGeneration = ctx.FindBy<GameOfLifeGenerations>(c => c.GameId == game.GID);
 
-            GOLInternalServices service = new GOLInternalServices(ctx);
             service.StartGame(new StartGameModel { Id = game.GID, ActiveCells = JsonSerializer.Deserialize<List<Position>>(lastGeneration.MaxBy(c => c.Id)?.Generation) ?? new List<Position>() });
             Console.WriteLine("Restart");
         }
