@@ -32,7 +32,7 @@ Task.Run(() =>
     GOLInternalServices service = new GOLInternalServices(ctx);
 
     //Get unfinish game
-    var games = ctx.FindBy<GameOfLifeHeader>(c => c.Status == GOLStatus.Running.ToString());
+    var games = ctx.FindBy<GameOfLifeHeader>(c => c.Status == nameof(GOLStatus.Running));
 
     if (games.Any())
     {

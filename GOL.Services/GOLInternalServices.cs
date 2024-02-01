@@ -40,7 +40,7 @@ namespace GOL.Services
                 {
                     GID = gameRequest.Id,
                     StartTime = DateTime.Now,
-                    Status = GOLStatus.Running.ToString()
+                    Status = nameof(GOLStatus.Running)
                 };
 
                 //Save
@@ -270,7 +270,7 @@ namespace GOL.Services
         private bool IsCancel(Guid gameId)
         {
             var game = _ctx.FindOne<GameOfLifeHeader>(gameId);
-            return game.Status == GOLStatus.Cancel.ToString();
+            return game.Status == nameof(GOLStatus.Cancel);
         }
 
         private int AddGeneration(Guid gameId, List<Position> gen)
@@ -292,7 +292,7 @@ namespace GOL.Services
             var game = _ctx.FindOne<GameOfLifeHeader>(gameId);
 
             game.EndTime = DateTime.Now;
-            game.Status = GOLStatus.Finish.ToString();
+            game.Status = nameof(GOLStatus.Finish);
 
             _ctx.Update(game);
         }

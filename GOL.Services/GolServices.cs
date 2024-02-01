@@ -151,7 +151,7 @@ namespace GOL.Services
                 var game = _ctx.FindOne<GameOfLifeHeader>(gameId);
 
                 game.EndTime = DateTime.Now;
-                game.Status = GOLStatus.Cancel.ToString();
+                game.Status = nameof(GOLStatus.Cancel);
 
                 _ = _ctx.Update(game);
 
