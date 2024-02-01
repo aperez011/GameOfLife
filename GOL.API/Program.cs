@@ -31,15 +31,18 @@ Task.Run(() =>
     dbGolContext ctx = new();
 
     //Get unfinish game
-    var game = ctx.FindBy<GameOfLifeHeader>(c => c.Status == GOLStatus.Running.ToString()).FirstOrDefault();
+    var games = ctx.FindBy<GameOfLifeHeader>(c => c.Status == GOLStatus.Running.ToString());
 
-    if (game != null)
+    if (games.Any())
     {
-        var lastGeneration = ctx.FindBy<GameOfLifeGenerations>(c => c.GameId == game.GID);
+        foreach (var game in games)
+        {
+            var lastGeneration = ctx.FindBy<GameOfLifeGenerations>(c => c.GameId == game.GID);
 
-        GOLInternalServices service = new GOLInternalServices(ctx);
-        service.StartGame(new StartGameModel { Id = game.GID, ActiveCells = JsonSerializer.Deserialize<List<Position>>(lastGeneration.MaxBy(c => c.Id)?.Generation) ?? new List<Position>() });
-        Console.WriteLine("Restart");
+            GOLInternalServices service = new GOLInternalServices(ctx);
+            service.StartGame(new StartGameModel { Id = game.GID, ActiveCells = JsonSerializer.Deserialize<List<Position>>(lastGeneration.MaxBy(c => c.Id)?.Generation) ?? new List<Position>() });
+            Console.WriteLine("Restart");
+        }
     }
 });
 
