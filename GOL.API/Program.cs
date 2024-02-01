@@ -1,6 +1,10 @@
 using GOL.DataAccess;
+using GOL.Entities;
+using GOL.Entities.DTOs;
 using GOL.Services;
+using GOL.Utilities;
 using GOL.Utilities.Interfaces;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +24,24 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
+
+Task.Run(() =>
+{
+    //Starting unfinish game
+    dbGolContext ctx = new();
+
+    //Get unfinish game
+    var game = ctx.FindBy<GameOfLifeHeader>(c => c.Status == GOLStatus.Running.ToString()).FirstOrDefault();
+
+    if (game != null)
+    {
+        var lastGeneration = ctx.FindBy<GameOfLifeGenerations>(c => c.GameId == game.GID);
+
+        GOLInternalServices service = new GOLInternalServices(ctx);
+        service.StartGame(new StartGameModel { Id = game.GID, ActiveCells = JsonSerializer.Deserialize<List<Position>>(lastGeneration.MaxBy(c => c.Id)?.Generation) ?? new List<Position>() });
+        Console.WriteLine("Restart");
+    }
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
