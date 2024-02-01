@@ -21,7 +21,7 @@ namespace GOL.API.Controllers
         [ProducesResponseType(typeof(IList<GameOfLifeGenerations>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetGameGenerations([FromRoute] Guid gameId)
         {
-            var result = await _golServices.GetGameOfLifeInfo(gameId);
+            var result = await _golServices.GetGameOfLifeGenerations(gameId);
             if (!result.IsSuccess)
                 return StatusCode(result.statusCode, result.Message);
 
