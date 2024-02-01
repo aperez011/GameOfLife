@@ -4,6 +4,7 @@ using GOL.Entities.DTOs;
 using GOL.Services;
 using GOL.Utilities;
 using GOL.Utilities.Interfaces;
+using LiteDB;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,20 +29,22 @@ var app = builder.Build();
 Task.Run(() =>
 {
     //Starting unfinish game
-    dbGolContext ctx = new();
-    GOLInternalServices service = new GOLInternalServices(ctx);
-
-    //Get unfinish game
-    var games = ctx.FindBy<GameOfLifeHeader>(c => c.Status == nameof(GOLStatus.Running));
-
-    if (games.Any())
+    using (var ctx = new LiteDatabase(@"GOL.db"))
     {
-        foreach (var game in games)
-        {
-            var lastGeneration = ctx.FindBy<GameOfLifeGenerations>(c => c.GameId == game.GID);
+        //GOLInternalServices service = new GOLInternalServices(_ctx);
 
-            service.StartGame(new StartGameModel { Id = game.GID, ActiveCells = JsonSerializer.Deserialize<List<Position>>(lastGeneration.MaxBy(c => c.Id)?.Generation) ?? new List<Position>() });
-            Console.WriteLine("Restart");
+        //Get unfinish game
+        var games = ctx.GetCollection<GameOfLifeHeader>(typeof(GameOfLifeHeader).Name).Find(c => c.Status == nameof(GOLStatus.Running));
+
+        if (games.Any())
+        {
+            foreach (var game in games)
+            {
+                var lastGeneration = ctx.GetCollection<GameOfLifeGenerations>(typeof(GameOfLifeGenerations).Name).Find(c => c.GameId == game.GID);
+
+                //service.StartGame(new StartGameModel { Id = game.GID, ActiveCells = System.Text.Json.JsonSerializer.Deserialize<HashSet<Position>>(lastGeneration.MaxBy(c => c.Id)?.Generation) ?? new HashSet<Position>() });
+                Console.WriteLine("Restart");
+            }
         }
     }
 });

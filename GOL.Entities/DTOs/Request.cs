@@ -9,7 +9,7 @@ namespace GOL.Entities.DTOs
     public class StartGameRequest
     {
         // 0 => X access, 1 => Y access
-        public List<Position> InitialPositions { get; set; } = default;
+        public HashSet<Position> InitialPositions { get; set; } = default;
 
     }
 

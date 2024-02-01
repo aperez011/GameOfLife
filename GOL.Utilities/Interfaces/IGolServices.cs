@@ -9,7 +9,7 @@ namespace GOL.Utilities.Interfaces
         /// </summary>
         /// <param name="gameId">GUID:Game ID</param>
         /// <returns>Game status</returns>
-        Task<OperationResult<IList<GenerationResponseModel>>> GetGameOfLifeGenerations(Guid gameId);
+        Task<OperationResult<HashSet<GenerationResponseModel>>> GetGameOfLifeGenerations(Guid gameId);
 
         /// <summary>
         /// Get next generation for the game
@@ -22,7 +22,7 @@ namespace GOL.Utilities.Interfaces
         /// </summary>
         /// <param name="states">int: number of generations requested.</param>
         /// <returns>List: generation info</returns>
-        Task<OperationResult<IList<GenerationResponseModel>>> GetGenerations(StartGameRequest startBoard, int states);
+        Task<OperationResult<HashSet<GenerationResponseModel>>> GetGenerations(StartGameRequest startBoard, int states);
 
         /// <summary>
         /// Get the last board generate

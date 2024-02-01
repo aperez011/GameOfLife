@@ -6,14 +6,14 @@ namespace GOL.Utilities.Interfaces
     {
         Task AutomaticGame(StartGameModel gameRequest);
 
-        Task<GenerationResponseModel> FinalBoard(List<Position> gameRequest, int maxAttemptsAllowed);
+        Task<GenerationResponseModel> FinalBoard(HashSet<Position> gameRequest, int maxAttemptsAllowed);
 
         Task StartGame(StartGameModel gameRequest);
 
-        int NeighboringStates(int x, int y, IList<Position> currentCells);
+        int NeighboringStates(int x, int y, HashSet<Position> currentCells);
 
-        Task<bool> GenerateNextGeneration(IList<Position> lastGeneration);
+        Task<bool> GenerateNextGeneration(HashSet<Position> lastGeneration);
 
-        Task UpdateCurrentGenerationState(IList<Position> currentGeneration);
+        Task UpdateCurrentGenerationState(HashSet<Position> currentGeneration);
     }
 }

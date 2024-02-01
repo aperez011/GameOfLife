@@ -24,11 +24,11 @@ namespace GOL.Entities.DTOs
     {
         public Guid GameId { get; set; }
         public int GenerationNumber { get; set; } = default;
-        public IList<Position> LiveCells { get; set; } = default;
+        public HashSet<Position> LiveCells { get; set; } = default;
     }
 
     public class GameFinalStateResponseModel : GameResponseModel
     {
-        public IList<GenerationResponseModel> GenerationHistory { get; set; }
+        public HashSet<GenerationResponseModel> GenerationHistory { get; set; }
     }
 }

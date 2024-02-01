@@ -23,7 +23,7 @@ namespace GOL.Services
         }
 
 
-        public async Task<OperationResult<IList<GenerationResponseModel>>> GetGameOfLifeGenerations(Guid gameId)
+        public async Task<OperationResult<HashSet<GenerationResponseModel>>> GetGameOfLifeGenerations(Guid gameId)
         {
             try
             {
@@ -33,10 +33,10 @@ namespace GOL.Services
                 {
                    GameId = gameId,
                    GenerationNumber = c.Id,
-                   LiveCells = JsonSerializer.Deserialize<List<Position>>(c.Live) ?? new List<Position>()
-                }).ToList();
+                   LiveCells = JsonSerializer.Deserialize<HashSet<Position>>(c.Live) ?? new HashSet<Position>()
+                }).ToHashSet();
 
-                return OperationResult<IList<GenerationResponseModel>>.Success(response);
+                return OperationResult<HashSet<GenerationResponseModel>>.Success(response);
 
             }
             catch (Exception)
@@ -46,10 +46,10 @@ namespace GOL.Services
             }
         }
 
-        public async Task<OperationResult<IList<GenerationResponseModel>>> GetGenerations(StartGameRequest startBoard, int states)
+        public async Task<OperationResult<HashSet<GenerationResponseModel>>> GetGenerations(StartGameRequest startBoard, int states)
         {
-            List<Position> NewGeneration = startBoard.InitialPositions;
-            List<GenerationResponseModel> generations = new List<GenerationResponseModel>();
+            HashSet<Position> NewGeneration = startBoard.InitialPositions;
+            HashSet<GenerationResponseModel> generations = new HashSet<GenerationResponseModel>();
 
 
             try
@@ -58,17 +58,17 @@ namespace GOL.Services
                 {
                     var nexLife = await _gameServices.GenerateNextGeneration(NewGeneration);
                     if (!nexLife)
-                        return OperationResult<IList<GenerationResponseModel>>.Success(generations);
+                        return OperationResult<HashSet<GenerationResponseModel>>.Success(generations);
 
-                    generations.Add(new GenerationResponseModel { GenerationNumber = i + 1, LiveCells = NewGeneration.ToList() });
+                    generations.Add(new GenerationResponseModel { GenerationNumber = i + 1, LiveCells = NewGeneration });
                 }
 
-                return OperationResult<IList<GenerationResponseModel>>.Success(generations);
+                return OperationResult<HashSet<GenerationResponseModel>>.Success(generations);
 
             }
             catch (Exception ex)
             {
-                return OperationResult<IList<GenerationResponseModel>>.Fail((int)HttpStatusCode.NotFound, ex.Message);
+                return OperationResult<HashSet<GenerationResponseModel>>.Fail((int)HttpStatusCode.NotFound, ex.Message);
             }
             finally
             {
@@ -93,7 +93,7 @@ namespace GOL.Services
 
         public async Task<OperationResult<GenerationResponseModel>> GetNextGeneration(StartGameRequest startPositions)
         {
-            List<Position> NewGeneration = startPositions.InitialPositions;
+            HashSet<Position> NewGeneration = startPositions.InitialPositions;
 
             try
             {

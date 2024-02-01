@@ -57,16 +57,16 @@ namespace GOL.Services
             }
         }
 
-        public async Task<GenerationResponseModel> FinalBoard(List<Position> gameRequest, int maxAttemptsAllowed)
+        public async Task<GenerationResponseModel> FinalBoard(HashSet<Position> gameRequest, int maxAttemptsAllowed)
         {
             try
             {
                 //Set the current generation
-                _gol.CurrentGeneration = gameRequest.ToList();
+                _gol.CurrentGeneration = gameRequest;
 
                 for (int i = 0; i < maxAttemptsAllowed; i++)
                 {
-                    var previewsBoard = _gol.CurrentGeneration.ToList();
+                    var previewsBoard = _gol.CurrentGeneration;
 
                     bool newLife = await this.GenerateNextGeneration(_gol.CurrentGeneration);
 
@@ -87,7 +87,7 @@ namespace GOL.Services
             try
             {
                 //Set the current generation
-                _gol.CurrentGeneration = gameRequest.ActiveCells.ToList();
+                _gol.CurrentGeneration = gameRequest.ActiveCells;
 
                 bool newLife = await this.GenerateNextGeneration(_gol.CurrentGeneration);
 
@@ -126,9 +126,9 @@ namespace GOL.Services
             }
         }
 
-        public async Task<bool> GenerateNextGeneration(IList<Position> cells)
+        public async Task<bool> GenerateNextGeneration(HashSet<Position> cells)
         {
-            List<Position> _currentGeneration = cells.ToList();
+            HashSet<Position> _currentGeneration = cells;
             try
             {
                 bool newLife = false;
@@ -173,9 +173,9 @@ namespace GOL.Services
             }
         }
 
-        public async Task UpdateCurrentGenerationState(IList<Position> currentGeneration)
+        public async Task UpdateCurrentGenerationState(HashSet<Position> currentGeneration)
         {
-            List<Position> _currentGeneration = currentGeneration.ToList();
+            HashSet<Position> _currentGeneration = currentGeneration;
             try
             {
                 axisX = currentGeneration.Select(c => c.X).ToArray();
@@ -210,7 +210,7 @@ namespace GOL.Services
             }
         }
 
-        public int NeighboringStates(int x, int y, IList<Position> cells)
+        public int NeighboringStates(int x, int y, HashSet<Position> cells)
         {
             //Count Neigbor
             //UP
@@ -273,7 +273,7 @@ namespace GOL.Services
             return game.Status == nameof(GOLStatus.Cancel);
         }
 
-        private int AddGeneration(Guid gameId, List<Position> gen)
+        private int AddGeneration(Guid gameId, HashSet<Position> gen)
         {
             var gol = new GameOfLifeGenerations
             {
