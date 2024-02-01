@@ -131,7 +131,7 @@ namespace GOL.Services
                 //Thread.CurrentThread.IsBackground = true;
 
                 Console.WriteLine($"Game '{game.Id}' has started");
-                _gameServices.AutomaticGame(game);
+                _ = _gameServices.AutomaticGame(game);
 
                 //}).Start();
 
