@@ -2,6 +2,7 @@
 using GOL.Utilities.DB;
 using LiteDB;
 using Microsoft.Extensions.Options;
+using System.Linq.Expressions;
 
 namespace GOL.DataAccess
 {
@@ -33,6 +34,12 @@ namespace GOL.DataAccess
         {
             return _db.GetCollection<T>(typeof(T).Name)
                 .Find(x => x.GID == gid).FirstOrDefault() ?? new T();
+        }
+
+        public IEnumerable<T> FindBy<T>(Expression<Func<T, bool>> condition) where T : EntityBase, new()
+        {
+            return _db.GetCollection<T>(typeof(T).Name)
+                .Find(condition);
         }
 
         public int Insert<T>(T forecast) where T : EntityBase, new()

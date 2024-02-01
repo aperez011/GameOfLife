@@ -5,6 +5,7 @@ using GOL.Utilities;
 using GOL.Utilities.Interfaces;
 using System.Collections.Generic;
 using System.Net;
+using System.Text.Json;
 using System.Threading;
 
 namespace GOL.Services
@@ -21,31 +22,21 @@ namespace GOL.Services
             _ctx = ctx;
         }
 
-        public async Task<OperationResult> GetFinalState(Guid gameId)
-        {
-            throw new NotImplementedException();
-        }
 
-        public async Task<OperationResult<GameResponseModel>> GetGameOfLifeInfo(Guid gameId)
+        public async Task<OperationResult<IList<GenerationResponseModel>>> GetGameOfLifeGenerations(Guid gameId)
         {
             try
             {
-                var ins = new GameOfLifeGenerations
+                var generations = _ctx.FindBy<GameOfLifeGenerations>(c=> c.GameId == gameId);
+
+                var response = generations.Select(c => new GenerationResponseModel
                 {
-                    Id = 0,
-                    GID = Guid.NewGuid(),
-                    Generation = 2,
-                    Live = ""
-                };
+                   GameId = gameId,
+                   GenerationNumber = c.Id,
+                   LiveCells = JsonSerializer.Deserialize<List<Position>>(c.Live) ?? new List<Position>()
+                }).ToList();
 
-                //var test = _ctx.Insert(ins);
-
-                var getTest = _ctx.FindAll<GameOfLifeGenerations>().ToList();
-
-
-                var one = _ctx.FindOne<GameOfLifeGenerations>(Guid.Parse("3f11ac95-cab6-4a6f-8632-a9ffd867dba0"));
-
-                return OperationResult<GameResponseModel>.Success();
+                return OperationResult<IList<GenerationResponseModel>>.Success(response);
 
             }
             catch (Exception)
@@ -153,9 +144,25 @@ namespace GOL.Services
             }
         }
 
-        public async Task<OperationResult<GameResponseModel>> EndGameOfLife(Guid gameId)
+        public async Task<OperationResult> EndGameOfLife(Guid gameId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var game = _ctx.FindOne<GameOfLifeHeader>(gameId);
+
+                game.EndTime = DateTime.Now;
+                game.Status = GOLStatus.Cancel.ToString();
+
+                _ = _ctx.Update(game);
+
+                return OperationResult<GeneralResponseModel>.Success();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

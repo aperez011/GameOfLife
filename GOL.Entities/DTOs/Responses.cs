@@ -22,6 +22,7 @@ namespace GOL.Entities.DTOs
 
     public class GenerationResponseModel
     {
+        public Guid GameId { get; set; }
         public int GenerationNumber { get; set; } = default;
         public IList<Position> LiveCells { get; set; } = default;
     }

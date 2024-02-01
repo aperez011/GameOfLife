@@ -9,7 +9,7 @@ namespace GOL.Utilities.Interfaces
         /// </summary>
         /// <param name="gameId">GUID:Game ID</param>
         /// <returns>Game status</returns>
-        Task<OperationResult<GameResponseModel>> GetGameOfLifeInfo(Guid gameId);
+        Task<OperationResult<IList<GenerationResponseModel>>> GetGameOfLifeGenerations(Guid gameId);
 
         /// <summary>
         /// Get next generation for the game
@@ -32,8 +32,6 @@ namespace GOL.Utilities.Interfaces
         /// <returns></returns>
         Task<OperationResult<GenerationResponseModel>> GetFinalBoard(StartGameRequest startBoard, int maxAttemptsAllowed);
 
-        Task<OperationResult> GetFinalState(Guid gameId);
-
         /// <summary>
         /// Allows uploading a new game.
         /// </summary>
@@ -46,7 +44,7 @@ namespace GOL.Utilities.Interfaces
         /// </summary>
         /// <param name="gameId">GUID:Game ID</param>
         /// <returns>Game last status</returns>
-        Task<OperationResult<GameResponseModel>> EndGameOfLife(Guid gameId);
+        Task<OperationResult> EndGameOfLife(Guid gameId);
 
     }
 }
