@@ -2,7 +2,10 @@
 using GOL.Entities.DTOs;
 using GOL.Utilities.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
+using System.IO.IsolatedStorage;
 using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace GOL.API.Controllers
 {
@@ -86,6 +89,30 @@ namespace GOL.API.Controllers
                 return StatusCode(result.statusCode, result.Message);
 
             return Ok();
+        }
+
+        [HttpPost("Test")]
+        [ProducesResponseType(typeof(IList<GameOfLifeGenerations>), (int)HttpStatusCode.OK)]
+        public async IAsyncEnumerable<HashSet<Position>> GOLTest([FromBody] StartGameRequest startBoard,
+                                                 [EnumeratorCancellation] CancellationToken token)
+        {
+            HashSet<Position> _positions = startBoard.InitialPositions;
+
+            while (!token.IsCancellationRequested)
+            {
+                var tt = await _golServices.GetNextGeneration(new StartGameRequest { InitialPositions = _positions });
+
+                startBoard.InitialPositions = tt.Data.LiveCells;
+
+                yield return tt.Data.LiveCells;
+            }
+
+            /*
+            var result = await _golServices.GetNextGeneration(startBoard);
+            if (!result.IsSuccess)
+                return StatusCode(result.statusCode, result.Message);
+
+            return Ok();*/
         }
 
     }
